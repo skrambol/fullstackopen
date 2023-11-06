@@ -15,8 +15,15 @@ const Button = ({text, onClick}) => {
 }
 
 const StatisticsLine = ({text, counter, unit=""}) => {
+  if (unit === "%") {
+    counter = counter * 100
+  }
+
   return (
-    <p>{text} {counter}{unit}</p>
+    <tr>
+      <td>{text}</td>
+      <td>{counter}{unit}</td>
+    </tr>
   )
 }
 
@@ -37,12 +44,16 @@ const Statistics = ({good, neutral, bad}) => {
   return (
     <div>
       <Header text="statistics"/>
-      <StatisticsLine text="good" counter={good}/>
-      <StatisticsLine text="neutral" counter={neutral}/>
-      <StatisticsLine text="bad" counter={bad}/>
-      <StatisticsLine text="all" counter={all}/>
-      <StatisticsLine text="average" counter={average}/>
-      <StatisticsLine text="positive" unit="%" counter={positive}/>
+      <table>
+        <tbody>
+          <StatisticsLine text="good" counter={good}/>
+          <StatisticsLine text="neutral" counter={neutral}/>
+          <StatisticsLine text="bad" counter={bad}/>
+          <StatisticsLine text="all" counter={all}/>
+          <StatisticsLine text="average" counter={average}/>
+          <StatisticsLine text="positive" unit="%" counter={positive}/>
+        </tbody>
+      </table>
     </div>
   )
 }
