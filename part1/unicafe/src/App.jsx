@@ -20,20 +20,36 @@ const Display = ({text, counter, unit=""}) => {
   )
 }
 
-const Statistics = ({good, neutral, bad}) => {
+const StatisticsContent = ({good, neutral, bad}) => {
   const all = good + neutral + bad
   const average = ((good - bad) / all) || 0
   const positive = (good / all) || 0
 
+  if (all < 1) {
+    return (
+      <div>
+        No feedback given
+      </div>
+    )
+  }
+
   return (
     <div>
-      <Header text="statistics"/>
       <Display text="good" counter={good}/>
       <Display text="neutral" counter={neutral}/>
       <Display text="bad" counter={bad}/>
       <Display text="all" counter={all}/>
       <Display text="average" counter={average}/>
       <Display text="positive" unit="%" counter={positive}/>
+    </div>
+  )
+}
+
+const Statistics = ({good, neutral, bad}) => {
+  return (
+    <div>
+      <Header text="statistics"/>
+      <StatisticsContent good={good} neutral={neutral} bad={bad}/>
     </div>
   )
 }
