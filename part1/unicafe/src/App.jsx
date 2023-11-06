@@ -14,9 +14,9 @@ const Button = ({text, onClick}) => {
   )
 }
 
-const Display = ({text, counter}) => {
+const Display = ({text, counter, unit=""}) => {
   return (
-    <p>{text} {counter}</p>
+    <p>{text} {counter}{unit}</p>
   )
 }
 
@@ -25,6 +25,10 @@ const App = () => {
   const [good, setGood] = useState(0)
   const [neutral, setNeutral] = useState(0)
   const [bad, setBad] = useState(0)
+
+  const all = good + neutral + bad
+  const average = ((good - bad) / all) || 0
+  const positive = (good / all) || 0
 
   return (
     <div>
@@ -40,6 +44,9 @@ const App = () => {
         <Display text="good" counter={good}/>
         <Display text="neutral" counter={neutral}/>
         <Display text="bad" counter={bad}/>
+        <Display text="all" counter={all}/>
+        <Display text="average" counter={average}/>
+        <Display text="positive" unit="%" counter={positive}/>
       </div>
     </div>
   )
