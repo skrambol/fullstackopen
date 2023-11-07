@@ -1,4 +1,7 @@
 import { useState } from 'react'
+import Persons from './components/Persons'
+import PersornForm from './components/PersonForm'
+import Filter from './components/Filter'
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -26,6 +29,10 @@ const App = () => {
   const addPerson = (event) => {
     event.preventDefault()
 
+    if (newName === "" || newPhoneNumber === "") {
+      return alert('Name and Phone Number cannot be blank.')
+    }
+
     const newPerson = {
       name: newName,
       phoneNumber: newPhoneNumber
@@ -43,27 +50,13 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      filter by name: <input value={filterName} onChange={changeFilterName}/>
-      <form onSubmit={addPerson}>
-        <h2>Add new person</h2>
-        <div>
-          name: <input value={newName} onChange={changeName}/>
-        </div>
-        <div>
-          phone number: <input value={newPhoneNumber} onChange={changePhoneNumber}/>
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
-      <h2>Numbers</h2>
-      <div>
-        {
-          persons
-          .filter(person => person.name.toLowerCase().includes(filterName))
-          .map(person => <p key={person.name}>{person.name} -- {person.phoneNumber}</p>)
-        }
-      </div>
+      <Filter filterName={filterName} changeFilterName={changeFilterName}/>
+
+      <h3>Add new person</h3>
+      <PersornForm newName={newName} newPhoneNumber={newPhoneNumber} addPerson={addPerson} changeName={changeName} changePhoneNumber={changePhoneNumber}/>
+
+      <h3>Numbers</h3>
+      <Persons persons={persons.filter(person => person.name.toLowerCase().includes(filterName))}/>
     </div>
   )
 }
