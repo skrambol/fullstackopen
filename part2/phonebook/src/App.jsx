@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import Persons from './components/Persons'
 import PersornForm from './components/PersonForm'
 import Filter from './components/Filter'
-import axios from 'axios'
 import personsService from './services/persons'
 
 const App = () => {
@@ -53,6 +52,15 @@ const App = () => {
 
   }
 
+  const removePerson = person => {
+    if (confirm(`Are you sure you want to delete ${person.name}`)) {
+      personsService.remove(person.id).then(_ => {
+        setPersons(persons.filter(p => p.id !== person.id))
+      })
+    }
+  }
+
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -62,7 +70,7 @@ const App = () => {
       <PersornForm newName={newName} newPhoneNumber={newPhoneNumber} addPerson={addPerson} changeName={changeName} changePhoneNumber={changePhoneNumber}/>
 
       <h3>Numbers</h3>
-      <Persons persons={persons.filter(person => person.name.toLowerCase().includes(filterName))}/>
+      <Persons persons={persons.filter(person => person.name.toLowerCase().includes(filterName))} removePerson={removePerson}/>
     </div>
   )
 }
