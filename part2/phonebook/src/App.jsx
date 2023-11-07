@@ -3,12 +3,14 @@ import Persons from './components/Persons'
 import PersornForm from './components/PersonForm'
 import Filter from './components/Filter'
 import personsService from './services/persons'
+import Notification from './components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newPhoneNumber, setNewPhoneNumber] = useState('')
   const [filterName, setFilterName] = useState('')
+  const [notification, setNotification] = useState({message: null, severity: 'info'})
 
   useEffect(() => {
     personsService.getAll()
@@ -25,6 +27,14 @@ const App = () => {
 
   const changeFilterName = (event) => {
     setFilterName(event.target.value)
+  }
+
+  const showNotification = ({message, severity}) => {
+    setNotification({message, severity})
+
+    setTimeout(() => {
+      setNotification({message: null, severity: 'info'})
+    }, 3000)
   }
 
   const addPerson = (event) => {
@@ -51,6 +61,7 @@ const App = () => {
           }))
           setNewName('')
           setNewPhoneNumber('')
+          showNotification({message: `Updated ${updatedPerson.name} number`, severity: 'info'})
         })
       return
     }
@@ -60,6 +71,7 @@ const App = () => {
         setPersons([...persons, person])
         setNewName('')
         setNewPhoneNumber('')
+        showNotification({message: `Added ${person.name} number`, severity: 'info'})
       })
   }
 
@@ -74,6 +86,7 @@ const App = () => {
 
   return (
     <div>
+      <Notification notification={notification}/>
       <h2>Phonebook</h2>
       <Filter filterName={filterName} changeFilterName={changeFilterName}/>
 
