@@ -37,6 +37,11 @@ const App = () => {
     }, 3000)
   }
 
+  const handleDeletedPerson = (person) => {
+    setPersons(persons.filter(p => p.id !== person.id))
+    showNotification({message: `Information of ${person.name} has already been removed from the server.`, severity: 'error'})
+  }
+
   const addPerson = (event) => {
     event.preventDefault()
 
@@ -63,6 +68,7 @@ const App = () => {
           setNewPhoneNumber('')
           showNotification({message: `Updated ${updatedPerson.name} number`, severity: 'info'})
         })
+        .catch(error => handleDeletedPerson(dupePerson))
       return
     }
 
@@ -77,9 +83,12 @@ const App = () => {
 
   const removePerson = person => {
     if (confirm(`Are you sure you want to delete ${person.name}`)) {
-      personsService.remove(person.id).then(_ => {
-        setPersons(persons.filter(p => p.id !== person.id))
-      })
+      personsService.remove(person.id)
+        .then(_ => {
+          setPersons(persons.filter(p => p.id !== person.id))
+          showNotification({message: `Removed ${person.name} from the phonebook.`, severity: 'info'})
+        })
+        .catch(error => handleDeletedPerson(person))
     }
   }
 
