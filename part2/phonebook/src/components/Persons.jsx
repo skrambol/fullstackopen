@@ -3,7 +3,7 @@ const Persons = ({persons}) => {
     <div>
       {
         persons
-        .map(person => <p key={person.name}>{person.name} -- {person.phoneNumber}</p>)
+        .map(person => <p key={person.id}>{person.name} -- {person.number}</p>)
       }
     </div>
   )
