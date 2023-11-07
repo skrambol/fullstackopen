@@ -39,8 +39,20 @@ const App = () => {
       number: newPhoneNumber
     }
 
-    if (persons.some(person => person.name === newPerson.name)) {
-      return alert(`${newName} is already added to the phonebook.`)
+    const dupePerson = persons.find(person => person.name === newPerson.name)
+    if (dupePerson) {
+      if (!confirm(`${dupePerson.name} is already added to phonebook, replace old number with new one?`)) return
+
+      personsService.update({...dupePerson, number: newPhoneNumber})
+        .then(updatedPerson => {
+          setPersons(persons.map(p => {
+            if (p.id === updatedPerson.id) return {...p, number: updatedPerson.number}
+            return p
+          }))
+          setNewName('')
+          setNewPhoneNumber('')
+        })
+      return
     }
 
     personsService.create(newPerson)
@@ -49,7 +61,6 @@ const App = () => {
         setNewName('')
         setNewPhoneNumber('')
       })
-
   }
 
   const removePerson = person => {
