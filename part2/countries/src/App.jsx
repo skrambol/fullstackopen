@@ -16,6 +16,7 @@ const App = () => {
     countriesService.getAll().then(c => {
       setCountries(c)
       document.querySelector("#search").disabled = false
+      document.querySelector("#search").placeholder = ""
     })
   }, [])
 
@@ -27,7 +28,7 @@ const App = () => {
     <div>
       <p>
         find countries
-        <input id="search" value={search} onChange={e => setSearch(e.target.value)} disabled/>
+        <input id="search" value={search} onChange={e => setSearch(e.target.value)} placeholder="fetching countries..." disabled/>
       </p>
       <Countries countries={filteredCountries} show={show}/>
     </div>
