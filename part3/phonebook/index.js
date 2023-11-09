@@ -1,6 +1,7 @@
 const express = require('express')
 
 const app = express()
+app.use(express.json())
 let phonebook = [
   {
     "id": 1,
@@ -26,6 +27,29 @@ let phonebook = [
 
 app.get('/api/persons', (req, res) => {
   res.json(phonebook)
+})
+
+app.post('/api/persons', (req, res) => {
+  const {name, number} = req.body
+
+  if (!name) {
+    return res.status(400).json({error: 'name is missing'})
+  }
+
+  if (!number) {
+    return res.status(400).json({error: 'number is missing'})
+  }
+
+  const person = phonebook.find(p => p.name === name)
+  if (person) {
+    return res.status(400).json({error: `'${name}' already exists. name must be unique`})
+  }
+
+  const id = Math.floor(Math.random() * 1000)
+  const newPerson = {id, name, number}
+
+  phonebook = phonebook.concat(newPerson)
+  return res.json(newPerson)
 })
 
 app.get('/api/persons/:id', (req, res) => {
