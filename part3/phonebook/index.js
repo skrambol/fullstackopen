@@ -8,11 +8,22 @@ morgan.token('body', req => {
   return JSON.stringify(req.body)
 })
 
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    response.status(400).send({error: 'malformatted id'})
+  }
+
+  next(err)
+}
+
 app.use(cors())
 app.use(express.json())
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
 let phonebook = []
+
 
 app.get('/api/persons', (req, res) => {
   Person.find().then(persons => {
@@ -43,28 +54,31 @@ app.post('/api/persons', (req, res) => {
   })
 })
 
-app.get('/api/persons/:id', (req, res) => {
-  const id = Number(req.params.id)
-  const person = phonebook.find(p => p.id === id)
+app.get('/api/persons/:id', (req, res, next) => {
+  Person.findById(req.params.id)
+    .then(person => {
+      if (!person) {
+        return res.status(404).end()
+      }
 
-  if (person) {
-    return res.json(person)
-  }
-
-  return res.status(404).end()
+      return res.json(person)
+    })
+    .catch(error => next(error))
 })
 
-app.delete('/api/persons/:id', (req, res) => {
-  const id = Number(req.params.id)
-  phonebook = phonebook.filter(p => p.id !== id)
-
-  return res.status(204).end()
+app.delete('/api/persons/:id', (req, res, next) => {
+  Person.findByIdAndDelete(req.params.id)
+    .then(result => {
+      res.status(204).end()
+    })
+    .catch(error => next(error))
 })
 
 app.get('/info', (req, res) => {
   res.send(`<p>Phonebook has info for ${phonebook.length} people</p><p>${new Date()}</p>`)
 })
 
+app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
