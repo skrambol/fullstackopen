@@ -2,6 +2,7 @@ const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
 const app = express()
+const Person = require('./models/persons')
 
 morgan.token('body', req => {
   return JSON.stringify(req.body)
@@ -11,31 +12,12 @@ app.use(cors())
 app.use(express.json())
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
-let phonebook = [
-  {
-    "id": 1,
-    "name": "Arto Hellas", 
-    "number": "040-123456"
-  },
-  {
-    "id": 2,
-    "name": "Ada Lovelace", 
-    "number": "39-44-5323523"
-  },
-  {
-    "id": 3,
-    "name": "Dan Abramov", 
-    "number": "12-43-234345"
-  },
-  {
-    "id": 4,
-    "name": "Mary Poppendieck", 
-    "number": "39-23-6423122"
-  }
-]
+let phonebook = []
 
 app.get('/api/persons', (req, res) => {
-  res.json(phonebook)
+  Person.find().then(persons => {
+    res.json(persons)
+  })
 })
 
 app.post('/api/persons', (req, res) => {
@@ -49,16 +31,16 @@ app.post('/api/persons', (req, res) => {
     return res.status(400).json({error: 'number is missing'})
   }
 
-  const person = phonebook.find(p => p.name === name)
-  if (person) {
-    return res.status(400).json({error: `'${name}' already exists. name must be unique`})
-  }
+  // to be refactored?
+  // const person = phonebook.find(p => p.name === name)
+  // if (person) {
+  //   return res.status(400).json({error: `'${name}' already exists. name must be unique`})
+  // }
 
-  const id = Math.floor(Math.random() * 1000)
-  const newPerson = {id, name, number}
-
-  phonebook = phonebook.concat(newPerson)
-  return res.json(newPerson)
+  const newPerson = new Person({name, number})
+  newPerson.save().then(result => {
+    return res.json(result)
+  })
 })
 
 app.get('/api/persons/:id', (req, res) => {
