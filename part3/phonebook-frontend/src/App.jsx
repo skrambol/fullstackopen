@@ -79,6 +79,11 @@ const App = () => {
         setNewPhoneNumber('')
         showNotification({message: `Added ${person.name} number`, severity: 'info'})
       })
+      .catch(error => {
+        const message = error.response?.data?.error || error.message
+
+        setNotification({message, severity: 'error'})
+      })
   }
 
   const removePerson = person => {
