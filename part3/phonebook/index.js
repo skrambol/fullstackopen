@@ -88,8 +88,14 @@ app.put('/api/persons/:id', (req, res, next) => {
     .catch(error => next(error))
 })
 
-app.get('/info', (req, res) => {
-  res.send(`<p>Phonebook has info for ${phonebook.length} people</p><p>${new Date()}</p>`)
+app.get('/info', (req, res, next) => {
+  Person.find()
+    .then(persons => {
+      const count = persons.length
+
+      res.send(`<p>Phonebook has info for ${count} people</p><p>${new Date()}</p>`)
+    })
+    .catch(error => next(error))
 })
 
 app.use(errorHandler)
