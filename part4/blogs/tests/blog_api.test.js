@@ -14,26 +14,36 @@ beforeEach(async () => {
   await Promise.all(promisedBlogs)
 })
 
-describe('/api/blogs', () => {
-  test('GET gets all blogs', async () => {
+describe('GET /api/blogs', () => {
+  test('gets all blogs', async () => {
     const response = await api.get('/api/blogs')
 
     expect(response.body).toHaveLength(initialBlogs.length)
   })
 
-  test('GET blogs have "id" property', async () => {
+  test('blog/s have "id" property', async () => {
     const response = await api.get('/api/blogs')
 
     expect(response.body[0].id).toBeDefined()
   })
+})
 
-  test('POST creates new blog', async () => {
+describe('POST /api/blogs', () => {
+  test('creates new blog', async () => {
     const newBlog = {title: "newest title", author: "O. Thor", url: "http://example.org/newest-title", likes: 2}
     const response = await api.post('/api/blogs', newBlog)
 
     const allBlogs = await blogsInDb()
     expect(response.statusCode).toBe(201)
     expect(allBlogs).toHaveLength(initialBlogs.length + 1)
+  })
+
+  test('if "likes" is missing, default to 0', async () => {
+    const newBlog = {title: "newest title", author: "O. Thor", url: "http://example.org/newest-title"}
+    const response = await api.post('/api/blogs', newBlog)
+
+    expect(response.statusCode).toBe(201)
+    expect(response.body.likes).toBe(0)
   })
 })
 
