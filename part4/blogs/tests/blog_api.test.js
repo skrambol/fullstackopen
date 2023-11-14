@@ -31,19 +31,36 @@ describe('GET /api/blogs', () => {
 describe('POST /api/blogs', () => {
   test('creates new blog', async () => {
     const newBlog = {title: "newest title", author: "O. Thor", url: "http://example.org/newest-title", likes: 2}
-    const response = await api.post('/api/blogs', newBlog)
+    const response = await api.post('/api/blogs').send(newBlog)
+
+    expect(response.statusCode).toBe(201)
 
     const allBlogs = await blogsInDb()
-    expect(response.statusCode).toBe(201)
     expect(allBlogs).toHaveLength(initialBlogs.length + 1)
   })
 
   test('if "likes" is missing, default to 0', async () => {
     const newBlog = {title: "newest title", author: "O. Thor", url: "http://example.org/newest-title"}
-    const response = await api.post('/api/blogs', newBlog)
+    const response = await api.post('/api/blogs').send(newBlog)
 
     expect(response.statusCode).toBe(201)
     expect(response.body.likes).toBe(0)
+
+    const allBlogs = await blogsInDb()
+    expect(allBlogs).toHaveLength(initialBlogs.length + 1)
+  })
+
+  test('if "title" or "url" is missing, status code = 400', async () => {
+    const newBlog = { author: "O. Thor"}
+    expect(newBlog.title).toBeUndefined()
+    expect(newBlog.url).toBeUndefined()
+
+    const response = await api.post('/api/blogs').send(newBlog)
+
+    expect(response.statusCode).toBe(400)
+
+    const allBlogs = await blogsInDb()
+    expect(allBlogs).toHaveLength(initialBlogs.length)
   })
 })
 

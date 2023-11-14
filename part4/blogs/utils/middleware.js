@@ -1,11 +1,11 @@
 const requestLogger = (request, response, next) => {
   if (process.env.NODE_ENV === 'test') return next()
 
+  console.info('---')
   console.info('Date:  ', new Date())
   console.info('Method:', request.method)
   console.info('Path:  ', request.path)
   console.info('Body:  ', request.body)
-  console.info('---')
 
   next()
 }
@@ -15,7 +15,9 @@ const unknownEndpoint = (request, response) => {
 }
 
 const errorHandler = (error, request, response, next) => {
-  logger.error(error.message)
+  if (process.env.NODE_ENV !== 'test') {
+    console.error(error.message)
+  }
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
