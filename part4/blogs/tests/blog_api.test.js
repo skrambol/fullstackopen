@@ -85,6 +85,43 @@ describe("DELETE /api/blogs/:id", () => {
   })
 })
 
+describe("PUT /api/blogs/:id", () => {
+  test('updates successfully', async () => {
+    const allBlogs = await blogsInDb()
+    const id = allBlogs[0].id
+    const newBlog = {title: "newest title", author: "O. Thor", url: "http://example.org/newest-title"}
+    const response = await api.put(`/api/blogs/${id}`).send(newBlog)
+
+    expect(response.statusCode).toBe(200)
+
+    const updatedBlogs = await blogsInDb()
+    expect(updatedBlogs[0].title).toBe(newBlog.title)
+    expect(updatedBlogs[0].author).toBe(newBlog.author)
+    expect(updatedBlogs[0].url).toBe(newBlog.url)
+  })
+
+  test('if "likes" is only in the body, update likes only', async () => {
+    const allBlogs = await blogsInDb()
+    const id = allBlogs[0].id
+    const response = await api.put(`/api/blogs/${id}`).send({likes: 42})
+
+    expect(response.statusCode).toBe(200)
+
+    const updatedBlogs = await blogsInDb()
+    expect(updatedBlogs[0].title).toBe(allBlogs[0].title)
+    expect(updatedBlogs[0].author).toBe(allBlogs[0].author)
+    expect(updatedBlogs[0].url).toBe(allBlogs[0].url)
+    expect(updatedBlogs[0].likes).toBe(42)
+  })
+
+  test('if "id" does not exist, status code = 404', async () => {
+    const id = "000000000000000000000000"
+    const response = await api.put(`/api/blogs/${id}`).send({likes: 42})
+
+    expect(response.statusCode).toBe(404)
+  })
+})
+
 afterAll(async () => {
   await mongoose.connection.close()
 })
