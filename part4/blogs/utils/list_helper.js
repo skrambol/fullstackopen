@@ -45,9 +45,28 @@ const mostBlogs = (blogs) => {
   return result
 }
 
+const mostLikes = (blogs) => {
+  if (blogs.length === 0) return {}
+
+  const result = _.chain(blogs)
+    .groupBy('author')
+    .map(e => {
+      return {
+        author: e[0].author,
+        likes: _.reduce(e, (acc, current) => acc + current.likes, 0)
+      }
+    })
+    .orderBy('likes', 'desc')
+    .first()
+    .value()
+
+  return result
+}
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
   mostBlogs,
+  mostLikes,
 }
