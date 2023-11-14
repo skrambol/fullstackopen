@@ -86,7 +86,7 @@ describe('favoriteBlog', () => {
     expect(result).toEqual({})
   })
 
-  test("if blog has only one element, should return the that blog", () => {
+  test("if blog has only one element, should return the blog", () => {
     const result = listHelper.favoriteBlog([BLOGS[0]])
     const {title, author, likes} = BLOGS[0]
 
@@ -109,5 +109,27 @@ describe('favoriteBlog', () => {
     const result = listHelper.favoriteBlog([ ...BLOGS, latestBlog ])
 
     expect(result).toEqual(latestBlog)
+  })
+})
+
+
+describe('mostBlogs', () => {
+  test("if blogs is empty, should return {}", () => {
+    const result = listHelper.mostBlogs([])
+
+    expect(result).toEqual({})
+  })
+
+  test("if blog has only one element, should return the blog", () => {
+    const result = listHelper.mostBlogs([BLOGS[0]])
+    const {author} = BLOGS[0]
+
+    expect(result).toEqual({author, blogs: 1})
+  })
+
+  test("if blog has only more than one element, should return the author with most blogs", () => {
+    const result = listHelper.mostBlogs(BLOGS)
+
+    expect(result).toEqual({author: "Robert C. Martin", blogs: 3})
   })
 })
