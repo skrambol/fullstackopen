@@ -2,7 +2,8 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const mongoose = require('mongoose')
-const morgan = require('morgan')
+const middleware = require('./utils/middleware')
+const {MONGODB_URI, PORT} = require('./utils/config')
 
 const blogSchema = new mongoose.Schema({
   title: String,
@@ -13,18 +14,17 @@ const blogSchema = new mongoose.Schema({
 
 const Blog = mongoose.model('Blog', blogSchema)
 
-const mongoUrl = process.env.MONGODB_URI
-mongoose.connect(mongoUrl)
+mongoose.connect(MONGODB_URI)
 .then(() => {
-    console.log('connecting to', mongoUrl)
+    console.log('connecting to', MONGODB_URI)
   })
 .catch(error => {
     console.error('error connecting to MongoDB:', error.message)
   })
 
 app.use(cors())
-app.use(morgan('tiny'))
 app.use(express.json())
+app.use(middleware.requestLogger)
 
 app.get('/api/blogs', (request, response) => {
   Blog
@@ -44,7 +44,9 @@ app.post('/api/blogs', (request, response) => {
     })
 })
 
-const PORT = process.env.PORT
+app.use(middleware.errorHandler)
+app.use(middleware.unknownEndpoint)
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
