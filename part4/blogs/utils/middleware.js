@@ -1,4 +1,6 @@
 const requestLogger = (request, response, next) => {
+  if (process.env.NODE_ENV === 'test') return next()
+
   console.info('Date:  ', new Date())
   console.info('Method:', request.method)
   console.info('Path:  ', request.path)
