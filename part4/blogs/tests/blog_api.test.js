@@ -9,9 +9,7 @@ const api = supertest(app)
 
 beforeEach(async () => {
   await Blog.deleteMany({})
-
-  const promisedBlogs = initialBlogs.map(blog => new Blog(blog).save())
-  await Promise.all(promisedBlogs)
+  await Blog.insertMany(initialBlogs)
 })
 
 describe('GET /api/blogs', () => {
@@ -58,6 +56,29 @@ describe('POST /api/blogs', () => {
     const response = await api.post('/api/blogs').send(newBlog)
 
     expect(response.statusCode).toBe(400)
+
+    const allBlogs = await blogsInDb()
+    expect(allBlogs).toHaveLength(initialBlogs.length)
+  })
+})
+
+describe("DELETE /api/blogs/:id", () => {
+  test('deletes successfully', async () => {
+    const allBlogs = await blogsInDb()
+    const id = allBlogs[0].id
+    const response = await api.delete(`/api/blogs/${id}`)
+
+    expect(response.statusCode).toBe(204)
+
+    const updatedBlogs = await blogsInDb()
+    expect(updatedBlogs).toHaveLength(initialBlogs.length - 1)
+  })
+
+  test('deletes nothing if id is incorrect', async () => {
+    const id = "000000000000000000000000"
+    const response = await api.delete(`/api/blogs/${id}`)
+
+    expect(response.statusCode).toBe(204)
 
     const allBlogs = await blogsInDb()
     expect(allBlogs).toHaveLength(initialBlogs.length)
