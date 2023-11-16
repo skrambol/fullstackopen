@@ -1,11 +1,13 @@
 const mongoose = require("mongoose");
 const supertest = require("supertest");
 const app = require("../app");
-const { initialBlogs, blogsInDb, initialUsers } = require("./test_helper");
+const { initialBlogs, blogsInDb, initialUsers, usersInDb } = require("./test_helper");
 const Blog = require("../models/blog");
 const User = require("../models/user");
+const jwt = require("jsonwebtoken")
 
 const api = supertest(app);
+jest.mock('jsonwebtoken');
 
 beforeEach(async () => {
   await User.deleteMany({});
@@ -14,6 +16,7 @@ beforeEach(async () => {
   await Blog.deleteMany({});
   await Blog.insertMany(initialBlogs);
 });
+
 
 describe("GET /api/blogs", () => {
   test("gets all blogs", async () => {
@@ -30,8 +33,34 @@ describe("GET /api/blogs", () => {
   });
 });
 
+
 describe("POST /api/blogs", () => {
+
+  test("if invalid token, return status 401", async () => {
+    jwt.verify.mockImplementation(() => {
+      const error = new Error()
+      error.name = "JsonWebTokenError"
+
+      throw error;
+    })
+
+    const newBlog = {
+      title: "newest title",
+      author: "O. Thor",
+      url: "http://example.org/newest-title",
+      likes: 2,
+    };
+    const response = await api.post("/api/blogs").send(newBlog);
+
+    expect(response.statusCode).toBe(401);
+
+    const allBlogs = await blogsInDb();
+    expect(allBlogs).toHaveLength(initialBlogs.length);
+  });
+
   test("creates new blog", async () => {
+    jwt.verify.mockReturnValue({username: initialUsers[0].username, id: initialUsers[0]._id})
+
     const newBlog = {
       title: "newest title",
       author: "O. Thor",
@@ -44,9 +73,14 @@ describe("POST /api/blogs", () => {
 
     const allBlogs = await blogsInDb();
     expect(allBlogs).toHaveLength(initialBlogs.length + 1);
+
+    const users = await usersInDb();
+    expect(users[0].blogs).toHaveLength(initialUsers[0].blogs.length + 1)
   });
 
   test('if "likes" is missing, default to 0', async () => {
+    jwt.verify.mockReturnValue({username: initialUsers[0].username, id: initialUsers[0]._id})
+
     const newBlog = {
       title: "newest title",
       author: "O. Thor",
@@ -62,6 +96,8 @@ describe("POST /api/blogs", () => {
   });
 
   test('if "title" or "url" is missing, status code = 400', async () => {
+    jwt.verify.mockReturnValue({username: initialUsers[0].username, id: initialUsers[0]._id})
+
     const newBlog = { author: "O. Thor" };
     expect(newBlog.title).toBeUndefined();
     expect(newBlog.url).toBeUndefined();

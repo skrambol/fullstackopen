@@ -1,5 +1,16 @@
 const Blog = require("../models/blog");
 const router = require("express").Router();
+const jwt = require("jsonwebtoken");
+const User = require("../models/user");
+
+const getToken = request => {
+  const authorization = request.get('authorization')
+  if (authorization && authorization.startsWith('Bearer ')) {
+    return authorization.replace('Bearer ', '');
+  }
+
+  return null
+}
 
 router.get("/", async (request, response) => {
   const blogs = await Blog.find({}).populate("user");
@@ -8,8 +19,16 @@ router.get("/", async (request, response) => {
 });
 
 router.post("/", async (request, response) => {
-  const blog = new Blog(request.body);
+  const {title, author, url, likes} = request.body
+  const decodedToken = jwt.verify(getToken(request), process.env.SECRET)
+
+  const user = await User.findById(decodedToken.id)
+
+  const blog = new Blog({title, author, url, likes, user});
   const newBlog = await blog.save();
+
+  user.blogs = user.blogs.concat(newBlog.id)
+  await user.save()
 
   response.status(201).json(newBlog);
 });
