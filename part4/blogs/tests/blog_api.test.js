@@ -1,12 +1,16 @@
 const mongoose = require("mongoose");
 const supertest = require("supertest");
 const app = require("../app");
-const { initialBlogs, blogsInDb } = require("./test_helper");
+const { initialBlogs, blogsInDb, initialUsers } = require("./test_helper");
 const Blog = require("../models/blog");
+const User = require("../models/user");
 
 const api = supertest(app);
 
 beforeEach(async () => {
+  await User.deleteMany({});
+  await User.insertMany(initialUsers);
+
   await Blog.deleteMany({});
   await Blog.insertMany(initialBlogs);
 });
@@ -22,6 +26,7 @@ describe("GET /api/blogs", () => {
     const response = await api.get("/api/blogs");
 
     expect(response.body[0].id).toBeDefined();
+    expect(response.body[0].user.id).toBeDefined();
   });
 });
 
