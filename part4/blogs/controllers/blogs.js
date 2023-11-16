@@ -12,7 +12,6 @@ router.get("/", async (request, response) => {
 router.post("/", async (request, response) => {
   const { title, author, url, likes } = request.body;
   const decodedToken = jwt.verify(request.token, process.env.SECRET);
-
   const user = await User.findById(decodedToken.id);
 
   const blog = new Blog({ title, author, url, likes, user });
@@ -25,8 +24,20 @@ router.post("/", async (request, response) => {
 });
 
 router.delete("/:id", async (request, response) => {
-  await Blog.findByIdAndDelete(request.params.id);
+  const decodedToken = jwt.verify(request.token, process.env.SECRET);
+  const blog = await Blog.findById(request.params.id);
 
+  if (blog) {
+    const user = await User.findById(decodedToken.id).populate("blogs");
+
+    if (blog.user.toString() !== decodedToken.id) {
+      return response.status(401).json({ error: "invalid user/blog" });
+    }
+
+    await blog.delete();
+    user.blogs.filter((b) => b.id !== blog._id.toString());
+    await user.save();
+  }
   response.status(204).end();
 });
 

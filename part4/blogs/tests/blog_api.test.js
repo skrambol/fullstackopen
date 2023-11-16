@@ -123,7 +123,44 @@ describe("POST /api/blogs", () => {
 });
 
 describe("DELETE /api/blogs/:id", () => {
+  test("if invalid token, return 401", async () => {
+    jwt.verify.mockImplementation(() => {
+      const error = new Error();
+      error.name = "JsonWebTokenError";
+
+      throw error;
+    });
+
+    const response = await api.delete(`/api/blogs/any_id`);
+
+    expect(response.statusCode).toBe(401);
+
+    const updatedBlogs = await blogsInDb();
+    expect(updatedBlogs).toHaveLength(initialBlogs.length);
+  });
+
+  test("if different user, return 401", async () => {
+    jwt.verify.mockReturnValue({
+      username: initialUsers[0].username,
+      id: initialUsers[0]._id,
+    });
+
+    const allBlogs = await blogsInDb();
+    const id = allBlogs[2].id;
+    const response = await api.delete(`/api/blogs/${id}`);
+
+    expect(response.statusCode).toBe(401);
+
+    const updatedBlogs = await blogsInDb();
+    expect(updatedBlogs).toHaveLength(initialBlogs.length);
+  });
+
   test("deletes successfully", async () => {
+    jwt.verify.mockReturnValue({
+      username: initialUsers[0].username,
+      id: initialUsers[0]._id,
+    });
+
     const allBlogs = await blogsInDb();
     const id = allBlogs[0].id;
     const response = await api.delete(`/api/blogs/${id}`);
@@ -132,9 +169,16 @@ describe("DELETE /api/blogs/:id", () => {
 
     const updatedBlogs = await blogsInDb();
     expect(updatedBlogs).toHaveLength(initialBlogs.length - 1);
+    const users = await usersInDb();
+    expect(users[0].blogs.filter((b) => b.id === id)).toEqual([]);
   });
 
   test("deletes nothing if id is incorrect", async () => {
+    jwt.verify.mockReturnValue({
+      username: initialUsers[0].username,
+      id: initialUsers[0]._id,
+    });
+
     const id = "000000000000000000000000";
     const response = await api.delete(`/api/blogs/${id}`);
 
