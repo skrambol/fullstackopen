@@ -1,25 +1,34 @@
-const router = require('express').Router()
-const bcrypt = require('bcrypt')
+const router = require("express").Router();
+const bcrypt = require("bcrypt");
 
-const User = require('../models/user')
+const User = require("../models/user");
 
-router.get('/', async (request, response) => {
-  const users = await User.find({})
+router.get("/", async (request, response) => {
+  const users = await User.find({});
 
-  response.json(users)
-})
+  response.json(users);
+});
 
-router.post('/', async (request, response) => {
-  const {username, name, password} = request.body
+router.post("/", async (request, response) => {
+  const { username, name, password } = request.body;
 
-  const saltRounds = 10
-  const passwordHash = await bcrypt.hash(password, saltRounds)
+  if (!(username && password)) {
+    // throw ValidationError("invalid password length")
+    return response.status(400).json({ error: "missing username or password" });
+  }
 
-  const userObject = new User({username, name, passwordHash})
-  const newUser = await userObject.save()
+  if (password.length < 3) {
+    // throw ValidationError("invalid password length")
+    return response.status(400).json({ error: "invalid password length" });
+  }
 
-  response.status(201).json(newUser)
+  const saltRounds = 10;
+  const passwordHash = await bcrypt.hash(password, saltRounds);
 
-})
+  const userObject = new User({ username, name, passwordHash });
+  const newUser = await userObject.save();
 
-module.exports = router
+  response.status(201).json(newUser);
+});
+
+module.exports = router;

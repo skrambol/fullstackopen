@@ -1,11 +1,11 @@
-const listHelper = require('../utils/list_helper')
+const listHelper = require("../utils/list_helper");
 
-test('dummy returns one', () => {
-  const blogs = []
+test("dummy returns one", () => {
+  const blogs = [];
 
-  const result = listHelper.dummy(blogs)
-  expect(result).toBe(1)
-})
+  const result = listHelper.dummy(blogs);
+  expect(result).toBe(1);
+});
 
 const BLOGS = [
   {
@@ -14,7 +14,7 @@ const BLOGS = [
     author: "Michael Chan",
     url: "https://reactpatterns.com/",
     likes: 7,
-    __v: 0
+    __v: 0,
   },
   {
     _id: "5a422aa71b54a676234d17f8",
@@ -22,7 +22,7 @@ const BLOGS = [
     author: "Edsger W. Dijkstra",
     url: "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
     likes: 5,
-    __v: 0
+    __v: 0,
   },
   {
     _id: "5a422b3a1b54a676234d17f9",
@@ -30,7 +30,7 @@ const BLOGS = [
     author: "Edsger W. Dijkstra",
     url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
     likes: 12,
-    __v: 0
+    __v: 0,
   },
   {
     _id: "5a422b891b54a676234d17fa",
@@ -38,7 +38,7 @@ const BLOGS = [
     author: "Robert C. Martin",
     url: "http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll",
     likes: 10,
-    __v: 0
+    __v: 0,
   },
   {
     _id: "5a422ba71b54a676234d17fb",
@@ -46,7 +46,7 @@ const BLOGS = [
     author: "Robert C. Martin",
     url: "http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html",
     likes: 0,
-    __v: 0
+    __v: 0,
   },
   {
     _id: "5a422bc61b54a676234d17fc",
@@ -54,103 +54,108 @@ const BLOGS = [
     author: "Robert C. Martin",
     url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
     likes: 2,
-    __v: 0
-  }
-]
+    __v: 0,
+  },
+];
 
-describe('totalLikes', () => {
+describe("totalLikes", () => {
   test("if blogs is empty, should return 0", () => {
-    const result = listHelper.totalLikes([])
+    const result = listHelper.totalLikes([]);
 
-    expect(result).toBe(0)
-  })
+    expect(result).toBe(0);
+  });
 
   test("if blog has only one element, should return the likes of that blog", () => {
-    const result = listHelper.totalLikes([BLOGS[0]])
+    const result = listHelper.totalLikes([BLOGS[0]]);
 
-    expect(result).toBe(BLOGS[0].likes)
-  })
+    expect(result).toBe(BLOGS[0].likes);
+  });
 
   test("if blog has only more than one element, should return the sum of likes", () => {
-    const result = listHelper.totalLikes(BLOGS)
-    const sum = BLOGS[0].likes + BLOGS[1].likes + BLOGS[2].likes + BLOGS[3].likes + BLOGS[4].likes + BLOGS[5].likes
+    const result = listHelper.totalLikes(BLOGS);
+    const sum =
+      BLOGS[0].likes +
+      BLOGS[1].likes +
+      BLOGS[2].likes +
+      BLOGS[3].likes +
+      BLOGS[4].likes +
+      BLOGS[5].likes;
 
-    expect(result).toBe(sum)
-  })
-})
+    expect(result).toBe(sum);
+  });
+});
 
-describe('favoriteBlog', () => {
+describe("favoriteBlog", () => {
   test("if blogs is empty, should return {}", () => {
-    const result = listHelper.favoriteBlog([])
+    const result = listHelper.favoriteBlog([]);
 
-    expect(result).toEqual({})
-  })
+    expect(result).toEqual({});
+  });
 
   test("if blog has only one element, should return the blog", () => {
-    const result = listHelper.favoriteBlog([BLOGS[0]])
-    const {title, author, likes} = BLOGS[0]
+    const result = listHelper.favoriteBlog([BLOGS[0]]);
+    const { title, author, likes } = BLOGS[0];
 
-    expect(result).toEqual({title, author, likes})
-  })
+    expect(result).toEqual({ title, author, likes });
+  });
 
   test("if blog has only more than one element, should return the sum of likes", () => {
-    const result = listHelper.favoriteBlog(BLOGS)
-    const {title, author, likes} = BLOGS[2]
+    const result = listHelper.favoriteBlog(BLOGS);
+    const { title, author, likes } = BLOGS[2];
 
-    expect(result).toEqual({title, author, likes})
-  })
+    expect(result).toEqual({ title, author, likes });
+  });
 
   test("if more than one blog has most likes, should return the the latest one in the array", () => {
     const latestBlog = {
-      "title": "My title",
-      "author": "Author Johnson",
-      "likes": 12,
-    }
-    const result = listHelper.favoriteBlog([ ...BLOGS, latestBlog ])
+      title: "My title",
+      author: "Author Johnson",
+      likes: 12,
+    };
+    const result = listHelper.favoriteBlog([...BLOGS, latestBlog]);
 
-    expect(result).toEqual(latestBlog)
-  })
-})
+    expect(result).toEqual(latestBlog);
+  });
+});
 
-
-describe('mostBlogs', () => {
+describe("mostBlogs", () => {
   test("if blogs is empty, should return {}", () => {
-    const result = listHelper.mostBlogs([])
+    const result = listHelper.mostBlogs([]);
 
-    expect(result).toEqual({})
-  })
+    expect(result).toEqual({});
+  });
 
   test("if blog has only one element, should return the blog", () => {
-    const result = listHelper.mostBlogs([BLOGS[0]])
-    const {author} = BLOGS[0]
+    const result = listHelper.mostBlogs([BLOGS[0]]);
+    const { author } = BLOGS[0];
 
-    expect(result).toEqual({author, blogs: 1})
-  })
+    expect(result).toEqual({ author, blogs: 1 });
+  });
 
   test("if blog has only more than one element, should return the author with most blogs", () => {
-    const result = listHelper.mostBlogs(BLOGS)
+    const result = listHelper.mostBlogs(BLOGS);
 
-    expect(result).toEqual({author: "Robert C. Martin", blogs: 3})
-  })
-})
+    expect(result).toEqual({ author: "Robert C. Martin", blogs: 3 });
+  });
+});
 
-describe('mostLikes', () => {
+describe("mostLikes", () => {
   test("if blogs is empty, should return {}", () => {
-    const result = listHelper.mostLikes([])
+    const result = listHelper.mostLikes([]);
 
-    expect(result).toEqual({})
-  })
+    expect(result).toEqual({});
+  });
 
   test("if blog has only one element, should return the blog", () => {
-    const result = listHelper.mostLikes([BLOGS[0]])
-    const {author} = BLOGS[0]
+    const result = listHelper.mostLikes([BLOGS[0]]);
+    const { author } = BLOGS[0];
 
-    expect(result).toEqual({author, likes: 7})
-  })
+    expect(result).toEqual({ author, likes: 7 });
+  });
 
   test("if blog has only more than one element, should return the author with most blogs", () => {
-    const result = listHelper.mostLikes(BLOGS)
+    const result = listHelper.mostLikes(BLOGS);
 
-    expect(result).toEqual({author: "Edsger W. Dijkstra", likes: 17})
-  })
-})
+    expect(result).toEqual({ author: "Edsger W. Dijkstra", likes: 17 });
+  });
+});

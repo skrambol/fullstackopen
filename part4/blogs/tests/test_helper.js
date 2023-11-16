@@ -1,5 +1,7 @@
-const Blog = require('../models/blog')
-const User = require('../models/user')
+const Blog = require("../models/blog");
+const User = require("../models/user");
+
+const bcrypt = require("bcrypt");
 
 const initialBlogs = [
   {
@@ -37,21 +39,47 @@ const initialBlogs = [
     author: "Robert C. Martin",
     url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
     likes: 2,
-  }
-]
+  },
+];
+
+const passwordHash = bcrypt.hashSync("password", 10);
+
+const initialUsers = [
+  {
+    username: "rcmartin",
+    name: "Robert C. Martin",
+    _id: "655574a228bbdac44685d29d",
+    passwordHash,
+  },
+  {
+    username: "ewdijkstra",
+    name: "Edsger W. Dijkstra",
+    _id: "655574b928bbdac44685d2a2",
+    passwordHash,
+  },
+  {
+    username: "mchan",
+    name: "Michael Chan",
+    _id: "655574c628bbdac44685d2a9",
+    passwordHash,
+  },
+];
 
 const blogsInDb = async () => {
-  const blogs = await Blog.find({})
+  const blogs = await Blog.find({});
 
-  return blogs.map(blog => blog.toJSON())
-}
+  return blogs.map((blog) => blog.toJSON());
+};
 
 const usersInDb = async () => {
-  const users = await User.find({})
+  const users = await User.find({});
 
-  return users.map(user => user.toJSON())
-}
+  return users.map((user) => user.toJSON());
+};
 
 module.exports = {
-  initialBlogs, blogsInDb, usersInDb
-}
+  initialBlogs,
+  blogsInDb,
+  initialUsers,
+  usersInDb,
+};
