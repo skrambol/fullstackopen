@@ -1,3 +1,5 @@
+const jwt = require("jsonwebtoken");
+
 const requestLogger = (request, response, next) => {
   if (process.env.NODE_ENV === "test") return next();
 
@@ -6,6 +8,15 @@ const requestLogger = (request, response, next) => {
   console.info("Method:", request.method);
   console.info("Path:  ", request.path);
   console.info("Body:  ", request.body);
+
+  next();
+};
+
+const getToken = (request, response, next) => {
+  const authorization = request.get("authorization");
+  if (authorization && authorization.startsWith("Bearer ")) {
+    request.token = authorization.replace("Bearer ", "");
+  }
 
   next();
 };
@@ -24,9 +35,9 @@ const errorHandler = (error, request, response, next) => {
   } else if (error.name === "ValidationError") {
     return response.status(400).json({ error: error.message });
   } else if (error.name === "JsonWebTokenError") {
-    return response.status(401).json({error: "invalid token"})
+    return response.status(401).json({ error: "invalid token" });
   } else if (error.name === "TokenExpiredError") {
-    return response.status(401).json({error: "expired token"})
+    return response.status(401).json({ error: "expired token" });
   }
 
   next(error);
@@ -34,6 +45,7 @@ const errorHandler = (error, request, response, next) => {
 
 module.exports = {
   requestLogger,
+  getToken,
   unknownEndpoint,
   errorHandler,
 };
