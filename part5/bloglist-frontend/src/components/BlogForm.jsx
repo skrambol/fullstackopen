@@ -1,15 +1,25 @@
 import blogsService from "../services/blogs"
 
-const BlogForm = ({blogTitle, blogAuthor, blogUrl, setBlogTitle, setBlogAuthor, setBlogUrl, setBlogs}) => {
+const BlogForm = ({blogTitle, blogAuthor, blogUrl, setBlogTitle, setBlogAuthor, setBlogUrl, setBlogs, showNotification}) => {
   const handleCreate = async (event) => {
     event.preventDefault()
 
     try {
       const newBlog = await blogsService.create({title: blogTitle, author: blogAuthor, url: blogUrl})
+      showNotification({
+        message: `Added "${blogTitle}" by "${blogAuthor}".`,
+        severity: 'info',
+      })
       setBlogs(blogs => blogs.concat(newBlog))
+      setBlogTitle('')
+      setBlogAuthor('')
+      setBlogUrl('')
     }
     catch(exception) {
-      console.error(exception)
+      showNotification({
+        message: 'An error occurred. Please try again later.',
+        severity: 'error',
+      })
     }
   }
 

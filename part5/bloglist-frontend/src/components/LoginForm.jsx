@@ -1,6 +1,6 @@
 import loginService from "../services/login"
 
-const LoginForm = ({username, password, setUsername, setPassword, setUser}) => {
+const LoginForm = ({username, password, setUsername, setPassword, setUser, showNotification}) => {
   const handleLogin = async (event) => {
     event.preventDefault()
 
@@ -13,7 +13,10 @@ const LoginForm = ({username, password, setUsername, setPassword, setUser}) => {
       window.localStorage.setItem('user', JSON.stringify(user))
     }
     catch (exception) {
-      console.error(exception)
+      showNotification({
+        message: 'An error occurred. Please check your username or password and try again.',
+        severity: 'error',
+      })
     }
   }
 
@@ -22,12 +25,12 @@ const LoginForm = ({username, password, setUsername, setPassword, setUser}) => {
       <form onSubmit={handleLogin}>
         <label htmlFor='username'>
           username: {" "}
-          <input type='text' name='username' value={username} onChange={e => setUsername(e.target.value)}/>
+          <input type='text' name='username' value={username} onChange={e => setUsername(e.target.value)} required/>
         </label>
         <br/>
         <label htmlFor='password'>
           password: {" "}
-          <input type='password' name='password' value={password} onChange={e => setPassword(e.target.value)}/>
+          <input type='password' name='password' value={password} onChange={e => setPassword(e.target.value)} required/>
         </label>
         <br/>
         <button type='submit'>Login</button>
