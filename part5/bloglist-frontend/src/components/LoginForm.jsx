@@ -1,6 +1,6 @@
 import loginService from "../services/login"
 
-const Login = ({username, password, setUsername, setPassword, setUser}) => {
+const LoginForm = ({username, password, setUsername, setPassword, setUser}) => {
   const handleLogin = async (event) => {
     event.preventDefault()
 
@@ -36,4 +36,4 @@ const Login = ({username, password, setUsername, setPassword, setUser}) => {
   )
 }
 
-export default Login
+export default LoginForm
