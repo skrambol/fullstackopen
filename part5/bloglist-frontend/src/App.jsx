@@ -15,6 +15,16 @@ const App = () => {
     )
   }, [])
 
+  useEffect(() => {
+    const localUser = JSON.parse(window.localStorage.getItem('user'))
+    setUser(localUser)
+  }, [])
+
+  const handleLogout = () => {
+    localStorage.clear()
+    setUser(null)
+  }
+
   if (!user) {
     return (
       <div>
@@ -27,7 +37,10 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-      <p>{user.name} is logged in</p>
+      <p>
+        {user.name} is logged in.
+        <button onClick={handleLogout}>logout</button>
+      </p>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
