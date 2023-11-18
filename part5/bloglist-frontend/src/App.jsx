@@ -4,16 +4,12 @@ import blogService from './services/blogs'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
+import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
-  const [blogTitle, setBlogTitle] = useState('')
-  const [blogAuthor, setBlogAuthor] = useState('')
-  const [blogUrl, setBlogUrl] = useState('')
 
   const [notification, setNotification] = useState(null)
 
@@ -46,10 +42,6 @@ const App = () => {
         <h2>login form</h2>
         <Notification notification={notification}/>
         <LoginForm
-          username={username}
-          password={password}
-          setUsername={setUsername}
-          setPassword={setPassword}
           setUser={setUser}
           showNotification={showNotification}
         />
@@ -65,16 +57,12 @@ const App = () => {
         {user.name} is logged in.
         <button onClick={handleLogout}>logout</button>
       </p>
-      <BlogForm
-        blogTitle={blogTitle}
-        setBlogTitle={setBlogTitle}
-        blogAuthor={blogAuthor}
-        setBlogAuthor={setBlogAuthor}
-        blogUrl={blogUrl}
-        setBlogUrl={setBlogUrl}
-        setBlogs={setBlogs}
-        showNotification={showNotification}
-      />
+      <Togglable buttonLabel={"new note"}>
+        <BlogForm
+          setBlogs={setBlogs}
+          showNotification={showNotification}
+        />
+      </Togglable>
       <div>
         {blogs.map(blog =>
           <Blog key={blog.id} blog={blog} />
