@@ -14,9 +14,12 @@ const App = () => {
   const [notification, setNotification] = useState(null)
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )
+    const getAll = async () => {
+      const allBlogs = await blogService.getAll()
+      setBlogs(allBlogs)
+    }
+
+    getAll()
   }, [])
 
   useEffect(() => {
@@ -27,6 +30,27 @@ const App = () => {
   const handleLogout = () => {
     localStorage.clear()
     setUser(null)
+  }
+
+  const handleLike = async ({id, author, title, likes}) => {
+    try {
+      const response = await blogService.like({id, likes})
+
+      setBlogs(allBlogs => {
+        const updatedBlog = allBlogs.find(blog => blog.id === id)
+        updatedBlog.likes = response.likes
+
+        return allBlogs
+      })
+      showNotification({message: `You liked "${title}" by "${author}".`, severity:"info"})
+
+    }
+    catch(exception) {
+      showNotification({
+        message: 'An error occurred. Please try again later.',
+        severity: 'error',
+      })
+    }
   }
 
   const showNotification = ({message, severity}) => {
@@ -65,7 +89,7 @@ const App = () => {
       </Togglable>
       <div>
         {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} />
+          <Blog key={blog.id} blog={blog} handleLike={handleLike}/>
         )}
       </div>
     </div>

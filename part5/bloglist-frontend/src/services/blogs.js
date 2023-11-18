@@ -24,4 +24,17 @@ const create = async ({title, author, url}) => {
   return response.data
 }
 
-export default { setToken, getAll, create }
+const like = async ({id, likes}) => {
+  const user = JSON.parse(localStorage.getItem('user'))
+  const token = `Bearer ${user.token}`
+  const config = {
+    headers: {
+      Authorization: token,
+    }
+  }
+
+  const response = await axios.put(`${baseUrl}/${id}`, {likes: likes+1}, config)
+  return response.data
+}
+
+export default { setToken, getAll, create, like }
