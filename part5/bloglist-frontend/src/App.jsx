@@ -25,6 +25,16 @@ const App = () => {
     setUser(localUser)
   }, [])
 
+  const createBlog = async ({ title, author, url }) => {
+    const newBlog = await blogService.create({ title, author, url })
+
+    setBlogs(blogs => blogs.concat(newBlog))
+    showNotification({
+      message: `Added "${title}" by "${author}".`,
+      severity: 'info',
+    })
+  }
+
   const handleLogout = () => {
     localStorage.clear()
     setUser(null)
@@ -73,7 +83,7 @@ const App = () => {
   const showNotification = ({ message, severity }) => {
     setNotification({ message, severity })
     setTimeout(() => {
-      setNotification(n => null)
+      setNotification({ message: '' })
     }, 3000)
   }
 
@@ -100,7 +110,7 @@ const App = () => {
       </p>
       <Togglable buttonLabel={'new note'}>
         <BlogForm
-          setBlogs={setBlogs}
+          createBlog={createBlog}
           showNotification={showNotification}
         />
       </Togglable>

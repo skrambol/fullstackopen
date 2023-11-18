@@ -1,26 +1,20 @@
 import PropTypes from 'prop-types'
 
 import { useState } from 'react'
-import blogsService from '../services/blogs'
 
-const BlogForm = ({ setBlogs, showNotification }) => {
-  const [blogTitle, setBlogTitle] = useState('')
-  const [blogAuthor, setBlogAuthor] = useState('')
-  const [blogUrl, setBlogUrl] = useState('')
+const BlogForm = ({ createBlog, showNotification }) => {
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
 
   const handleCreate = async (event) => {
     event.preventDefault()
 
     try {
-      const newBlog = await blogsService.create({ title: blogTitle, author: blogAuthor, url: blogUrl })
-      showNotification({
-        message: `Added "${blogTitle}" by "${blogAuthor}".`,
-        severity: 'info',
-      })
-      setBlogs(blogs => blogs.concat(newBlog))
-      setBlogTitle('')
-      setBlogAuthor('')
-      setBlogUrl('')
+      await createBlog({ title, author, url })
+      setTitle('')
+      setAuthor('')
+      setUrl('')
     }
     catch(exception) {
       showNotification({
@@ -36,17 +30,17 @@ const BlogForm = ({ setBlogs, showNotification }) => {
       <form onSubmit={handleCreate}>
         <label>
           title: {' '}
-          <input type='text' value={blogTitle} onChange={e => setBlogTitle(e.target.value)} required/>
+          <input type='text' value={title} onChange={e => setTitle(e.target.value)} required id="title"/>
         </label>
         <br/>
         <label>
           author: {' '}
-          <input type='text' value={blogAuthor} onChange={e => setBlogAuthor(e.target.value)} required/>
+          <input type='text' value={author} onChange={e => setAuthor(e.target.value)} required id="author"/>
         </label>
         <br/>
         <label>
           url: {' '}
-          <input type='url' value={blogUrl} onChange={e => setBlogUrl(e.target.value)} required/>
+          <input type='url' value={url} onChange={e => setUrl(e.target.value)} required id="url"/>
         </label>
         <br/>
         <button type='submit'>create</button>
@@ -56,7 +50,7 @@ const BlogForm = ({ setBlogs, showNotification }) => {
 }
 
 BlogForm.propTypes = {
-  setBlogs: PropTypes.func.isRequired,
+  createBlog: PropTypes.func.isRequired,
   showNotification: PropTypes.func.isRequired
 }
 

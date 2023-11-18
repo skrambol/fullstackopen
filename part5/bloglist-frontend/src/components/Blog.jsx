@@ -19,7 +19,7 @@ const Blog = ({ blog, handleLike, handleRemoveBlog }) => {
     <div style={style}>
       {blog.title} {blog.author}
       <button onClick={toggleVisibility}>{buttonLabel}</button>
-      <div style={detailsVisibility}>
+      <div style={detailsVisibility} className='blog-details'>
         <p>
           <a href={blog.url}>{blog.url}</a>
         </p>
