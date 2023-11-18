@@ -53,6 +53,25 @@ const App = () => {
     }
   }
 
+  const handleRemoveBlog = async ({id, title, author}) => {
+    try {
+      if (!confirm(`Are you sure you want to delete "${title}" by "${author}"?`)) return
+      const response = await blogService.remove({id})
+
+      setBlogs(allBlogs => {
+        return allBlogs.filter(blog => blog.id !== id)
+      })
+      showNotification({message: `You deleted "${title}" by "${author}".`, severity:"info"})
+    }
+    catch(exception) {
+      showNotification({
+        message: 'An error occurred. Please try again later.',
+        severity: 'error',
+      })
+    }
+
+  }
+
   const showNotification = ({message, severity}) => {
     setNotification({message, severity})
     setTimeout(() => {
@@ -89,7 +108,7 @@ const App = () => {
       </Togglable>
       <div>
         {blogs.sort((a,b) => b.likes - a.likes).map(blog =>
-          <Blog key={blog.id} blog={blog} handleLike={handleLike}/>
+          <Blog key={blog.id} blog={blog} handleLike={handleLike} handleRemoveBlog={handleRemoveBlog}/>
         )}
       </div>
     </div>

@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-const Blog = ({ blog, handleLike }) => {
+const Blog = ({ blog, handleLike, handleRemoveBlog }) => {
   const [visibility, setVisibility] = useState(false)
   const buttonLabel = visibility ? "hide" : "show"
   const detailsVisibility = {display: visibility ? "" : "none"}
@@ -28,6 +28,9 @@ const Blog = ({ blog, handleLike }) => {
         </p>
         <p>
           Added by: {blog.user.name}
+        </p>
+        <p>
+          <button onClick={() => handleRemoveBlog(blog)}>delete</button>
         </p>
       </div>
     </div>
