@@ -26,6 +26,9 @@ const Blog = ({ blog }) => {
           Likes: {blog.likes}
           <button>like</button>
         </p>
+        <p>
+          Added by: {blog.user.name}
+        </p>
       </div>
     </div>
   )
