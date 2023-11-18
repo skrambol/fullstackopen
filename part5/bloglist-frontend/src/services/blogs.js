@@ -22,7 +22,7 @@ const getAll = async () => {
   return response.data
 }
 
-const create = async ({title, author, url}) => {
+const create = async ({ title, author, url }) => {
   const user = JSON.parse(localStorage.getItem('user'))
   const token = `Bearer ${user.token}`
   const config = {
@@ -31,11 +31,11 @@ const create = async ({title, author, url}) => {
     }
   }
 
-  const response = await axios.post(baseUrl, {title, author, url}, config)
+  const response = await axios.post(baseUrl, { title, author, url }, config)
   return response.data
 }
 
-const like = async ({id, likes}) => {
+const like = async ({ id, likes }) => {
   const user = JSON.parse(localStorage.getItem('user'))
   const token = `Bearer ${user.token}`
   const config = {
@@ -44,11 +44,11 @@ const like = async ({id, likes}) => {
     }
   }
 
-  const response = await axios.put(`${baseUrl}/${id}`, {likes: likes+1}, config)
+  const response = await axios.put(`${baseUrl}/${id}`, { likes: likes+1 }, config)
   return response.data
 }
 
-const remove = async ({id}) => {
+const remove = async ({ id }) => {
   const config = getAuthHeaders()
 
   const response = await axios.delete(`${baseUrl}/${id}`, config)

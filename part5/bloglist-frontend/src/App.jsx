@@ -9,8 +9,6 @@ import Togglable from './components/Togglable'
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
-
-
   const [notification, setNotification] = useState(null)
 
   useEffect(() => {
@@ -32,9 +30,9 @@ const App = () => {
     setUser(null)
   }
 
-  const handleLike = async ({id, author, title, likes}) => {
+  const handleLike = async ({ id, author, title, likes }) => {
     try {
-      const response = await blogService.like({id, likes})
+      const response = await blogService.like({ id, likes })
 
       setBlogs(allBlogs => {
         const updatedBlog = allBlogs.find(blog => blog.id === id)
@@ -42,7 +40,7 @@ const App = () => {
 
         return allBlogs
       })
-      showNotification({message: `You liked "${title}" by "${author}".`, severity:"info"})
+      showNotification({ message: `You liked "${title}" by "${author}".`, severity:'info' })
 
     }
     catch(exception) {
@@ -53,15 +51,15 @@ const App = () => {
     }
   }
 
-  const handleRemoveBlog = async ({id, title, author}) => {
+  const handleRemoveBlog = async ({ id, title, author }) => {
     try {
       if (!confirm(`Are you sure you want to delete "${title}" by "${author}"?`)) return
-      const response = await blogService.remove({id})
+      const response = await blogService.remove({ id })
 
       setBlogs(allBlogs => {
         return allBlogs.filter(blog => blog.id !== id)
       })
-      showNotification({message: `You deleted "${title}" by "${author}".`, severity:"info"})
+      showNotification({ message: `You deleted "${title}" by "${author}".`, severity:'info' })
     }
     catch(exception) {
       showNotification({
@@ -72,8 +70,8 @@ const App = () => {
 
   }
 
-  const showNotification = ({message, severity}) => {
-    setNotification({message, severity})
+  const showNotification = ({ message, severity }) => {
+    setNotification({ message, severity })
     setTimeout(() => {
       setNotification(n => null)
     }, 3000)
@@ -100,7 +98,7 @@ const App = () => {
         {user.name} is logged in.
         <button onClick={handleLogout}>logout</button>
       </p>
-      <Togglable buttonLabel={"new note"}>
+      <Togglable buttonLabel={'new note'}>
         <BlogForm
           setBlogs={setBlogs}
           showNotification={showNotification}

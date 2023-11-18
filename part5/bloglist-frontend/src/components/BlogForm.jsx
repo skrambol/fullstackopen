@@ -1,7 +1,9 @@
-import { useState } from 'react'
-import blogsService from "../services/blogs"
+import PropTypes from 'prop-types'
 
-const BlogForm = ({setBlogs, showNotification}) => {
+import { useState } from 'react'
+import blogsService from '../services/blogs'
+
+const BlogForm = ({ setBlogs, showNotification }) => {
   const [blogTitle, setBlogTitle] = useState('')
   const [blogAuthor, setBlogAuthor] = useState('')
   const [blogUrl, setBlogUrl] = useState('')
@@ -10,7 +12,7 @@ const BlogForm = ({setBlogs, showNotification}) => {
     event.preventDefault()
 
     try {
-      const newBlog = await blogsService.create({title: blogTitle, author: blogAuthor, url: blogUrl})
+      const newBlog = await blogsService.create({ title: blogTitle, author: blogAuthor, url: blogUrl })
       showNotification({
         message: `Added "${blogTitle}" by "${blogAuthor}".`,
         severity: 'info',
@@ -33,17 +35,17 @@ const BlogForm = ({setBlogs, showNotification}) => {
       <h2>create new blog</h2>
       <form onSubmit={handleCreate}>
         <label>
-          title: {" "}
+          title: {' '}
           <input type='text' value={blogTitle} onChange={e => setBlogTitle(e.target.value)} required/>
         </label>
         <br/>
         <label>
-          author: {" "}
+          author: {' '}
           <input type='text' value={blogAuthor} onChange={e => setBlogAuthor(e.target.value)} required/>
         </label>
         <br/>
         <label>
-          url: {" "}
+          url: {' '}
           <input type='url' value={blogUrl} onChange={e => setBlogUrl(e.target.value)} required/>
         </label>
         <br/>
@@ -51,6 +53,11 @@ const BlogForm = ({setBlogs, showNotification}) => {
       </form>
     </div>
   )
+}
+
+BlogForm.propTypes = {
+  setBlogs: PropTypes.func.isRequired,
+  showNotification: PropTypes.func.isRequired
 }
 
 export default BlogForm
